@@ -29,7 +29,7 @@ const getForId = async (req, res) => {
     const collection = getCollection();
     verifyConnect(collection);
 
-    const annotation = await collection.find({ _id: new ObjectId(id) }).toArray();
+    const annotation = await getAnnotationForId(id);
     res.json(annotation);
 }
 
@@ -63,7 +63,7 @@ const update = async (req, res) => {
     verifyId(id)
     await collection.updateOne({ _id: new ObjectId(id)  }, { $set: updates });
 
-    const annotation = getAnnotationForId();
+    const annotation = await getAnnotationForId(id);
 
     res.status(204).json(annotation)
 }
@@ -74,7 +74,7 @@ const destroy = async (req, res) => {
     const collection = getCollection();
     verifyConnect(collection);
     
-    const annotation = getAnnotationForId();
+    const annotation = await getAnnotationForId(id);
 
     await collection.deleteOne({ _id: new ObjectId(id) });
 
@@ -82,17 +82,17 @@ const destroy = async (req, res) => {
 }
 
 const search = async (req, res) => {
-    const { query } = req.body;
+    const { query } = req.params;
 
     const collection = getCollection();
     verifyConnect(collection);
 
     const annotations = await collection.find(
-        { $text: { $search: query } }, 
-        { score: { $meta: 'textScore'} 
-    }).sort({ score: { $meta: 'textScore' } })
-
-    console.log(annotations)
+        { $text: { $search: query } },
+        { score: { $meta: 'textScore' } 
+    }).sort({ 
+        score: { $meta: 'textScore' } 
+    }).toArray();
 
     res.json(annotations)
 }

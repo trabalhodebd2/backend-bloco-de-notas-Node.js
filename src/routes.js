@@ -16,6 +16,6 @@ routes
     .patch(annotationsController.update)
     .delete(annotationsController.destroy)
 
-routes.get("/annotations/search/:text", annotationsController.search)
+routes.get("/annotations/search/:query", annotationsController.search)
 
 module.exports = routes;
