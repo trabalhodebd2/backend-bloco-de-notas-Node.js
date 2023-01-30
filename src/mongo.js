@@ -5,18 +5,22 @@ const client = new MongoClient(url);
 
 const dbName = process.env.DB_NAME;
 
-async function main() {
+let collection;
+
+const main = async () => {
   await client.connect();
   console.log("Conectado com sucesso ao MongoDB");
   
   const db = client.db(dbName);
-  const collection = db.collection('annotation');
-
-  return collection;
+  collection = db.collection('annotation');
+  
+  if (!collection) {
+    throw new Error("A colleção Annotation não existe");
+  }
 }
 
-const collection = main()
-  .then(console.log)
-  .catch(console.error);
+const getCollection = () => collection;
 
-module.exports = collection
+main()
+
+module.exports = { getCollection }
