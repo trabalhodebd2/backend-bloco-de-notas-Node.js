@@ -13,10 +13,14 @@ const main = async () => {
   
   const db = client.db(dbName);
   collection = db.collection('annotation');
-  
-  if (!collection) {
-    throw new Error("A colleção Annotation não existe");
-  }
+
+  collection.createIndex({ 
+    title: "text", 
+    content: "text" 
+  }, { 
+    default_language: 'pt',
+    weights: { title: 5, content: 1 }
+  })
 }
 
 const getCollection = () => collection;

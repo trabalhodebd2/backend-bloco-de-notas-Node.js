@@ -3,13 +3,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "mongodb": "^4.13.0",
     "nodemon": "^2.0.20"
   },
   "name": "backend---bloco-de-notas---node",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"

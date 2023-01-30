@@ -10,9 +10,12 @@ routes
     .post(annotationsController.create);
 
 routes
-    .route("/annotations/:_id")
+    .route("/annotations/:id")
+    .get(annotationsController.getForId)
     .put(annotationsController.update)
     .patch(annotationsController.update)
     .delete(annotationsController.destroy)
+
+routes.get("/annotations/search/:text", annotationsController.search)
 
 module.exports = routes;
