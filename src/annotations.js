@@ -3,7 +3,7 @@ const { ObjectId } = require("mongodb");
 
 const verifyConnect = (collection) => {
     if (!collection) {
-        throw new Error("A colleção Annotation não existe");
+        throw new Error("A coleção Annotation não existe");
     }
 }
 
@@ -12,7 +12,7 @@ const getAnnotationForId = async (id) => {
     
     const annotation = await collection.find({ _id: new ObjectId(id) }).toArray();
 
-    return annotation;
+    return annotation[0];
 }
 
 const getAllAnnotations = async (req, res) => {
@@ -24,7 +24,7 @@ const getAllAnnotations = async (req, res) => {
 }
 
 const getForId = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params;
 
     const collection = getCollection();
     verifyConnect(collection);
@@ -38,34 +38,28 @@ const create = async (req, res) => {
 
     const collection = getCollection();
     verifyConnect(collection);
-
+    
     const result = await collection.insertOne({title, content});
     const annotation = await collection.find({ _id: result.insertedId }).toArray();
 
-    res.status(201).json(annotation);
+    res.status(201).json(annotation[0]);
 }
 
 const update = async (req, res) => {
-    const { id } = req.params
-    const { title, content } = req.body;
+    const { id } = req.params;
+    const updates = { title, content } = req.body;
 
     const collection = getCollection();
     verifyConnect(collection);
     
-    const updates = {};
-
-    if (title) updates.title = title;
-    if (content) updates.content = content;
-
     if (Object.keys(updates).length === 0)
         throw new Error("Sem campos de update.");
     
-    verifyId(id)
     await collection.updateOne({ _id: new ObjectId(id)  }, { $set: updates });
 
     const annotation = await getAnnotationForId(id);
 
-    res.status(204).json(annotation)
+    res.status(204).json(annotation);
 }
 
 const destroy = async (req, res) => {
@@ -78,7 +72,7 @@ const destroy = async (req, res) => {
 
     await collection.deleteOne({ _id: new ObjectId(id) });
 
-    res.status(204).json(annotation)
+    res.status(204).json(annotation);
 }
 
 const search = async (req, res) => {
@@ -94,7 +88,7 @@ const search = async (req, res) => {
         score: { $meta: 'textScore' } 
     }).toArray();
 
-    res.json(annotations)
+    res.json(annotations);
 }
 
 module.exports = { getAllAnnotations, getForId, create, update, destroy, search }
