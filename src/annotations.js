@@ -7,6 +7,17 @@ const verifyConnect = (collection) => {
     }
 }
 
+const searchFullText = async (query, collection) => {
+    const annotations = await collection.find(
+        { $text: { $search: query } },
+        { score: { $meta: 'textScore' } 
+    }).sort({ 
+        score: { $meta: 'textScore' } 
+    }).toArray();
+
+    return annotations;
+}
+
 const getAnnotationForId = async (id) => {
     const collection = getCollection();
     
@@ -16,8 +27,12 @@ const getAnnotationForId = async (id) => {
 }
 
 const getAllAnnotations = async (req, res) => {
+    const { query } = req.query
     const collection = getCollection();
     verifyConnect(collection);
+    
+    if (query)
+        return res.json(await searchFullText(query, collection))
 
     const annotations = await collection.find({}).toArray();
     res.json(annotations);
@@ -75,20 +90,4 @@ const destroy = async (req, res) => {
     res.status(204).json(annotation);
 }
 
-const search = async (req, res) => {
-    const { query } = req.params;
-
-    const collection = getCollection();
-    verifyConnect(collection);
-
-    const annotations = await collection.find(
-        { $text: { $search: query } },
-        { score: { $meta: 'textScore' } 
-    }).sort({ 
-        score: { $meta: 'textScore' } 
-    }).toArray();
-
-    res.json(annotations);
-}
-
-module.exports = { getAllAnnotations, getForId, create, update, destroy, search }
+module.exports = { getAllAnnotations, getForId, create, update, destroy }
