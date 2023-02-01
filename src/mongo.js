@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const url =  process.env.DB_URL || 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 
-const dbName = process.env.DB_NAME;
+const dbName = process.env.DB_NAME || "annotation_app_node";
 
 let collection;
 
